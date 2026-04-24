@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Camp Expense Form</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-header">
+            <h1>⚽ Sports Camp Expense Form</h1>
+            <p>Multi-Step Expense Management System</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-dots">
+                <div class="dot active" data-step="1">1</div>
+                <div class="dot" data-step="2">2</div>
+                <div class="dot" data-step="3">3</div>
+                <div class="dot" data-step="4">4</div>
+                <div class="dot" data-step="5">5</div>
+                <div class="dot" data-step="6">6</div>
+            </div>
+            <div class="progress-fill"></div>
+        </div>
+
+        <!-- Main Form -->
+        <form id="expenseForm">
+            <!-- STEP 1: DETAILS -->
+            <div class="form-step active" id="step-1">
+                <h2>📋 Step 1: Institution Details</h2>
+                <div class="form-group">
+                    <label>Institution Name *</label>
+                    <input type="text" id="institution" placeholder="e.g., Delhi Sports Academy" required>
+                </div>
+                <div class="form-group">
+                    <label>Coach Name *</label>
+                    <input type="text" id="coach" placeholder="e.g., Rajesh Kumar" required>
+                </div>
+                <div class="form-group">
+                    <label>Manager Name *</label>
+                    <input type="text" id="manager" placeholder="e.g., Priya Singh" required>
+                </div>
+                <div class="form-group">
+                    <label>Number of Players *</label>
+                    <input type="number" id="players" placeholder="e.g., 15" required>
+                </div>
+                <div class="form-group">
+                    <label>Venue *</label>
+                    <input type="text" id="venue" placeholder="e.g., Indira Gandhi Stadium" required>
+                </div>
+                <div class="form-group">
+                    <label>Start Date *</label>
+                    <input type="date" id="startDate" required>
+                </div>
+                <div class="form-group">
+                    <label>End Date *</label>
+                    <input type="date" id="endDate" required>
+                </div>
+            </div>
+
+            <!-- STEP 2: CAMP EXPENSES -->
+            <div class="form-step" id="step-2">
+                <h2>🏕️ Step 2: Coaching Camp Expenses</h2>
+                <div id="campRows"></div>
+                <button type="button" class="btn-add" onclick="addCampRow()">+ Add Camp Expense Row</button>
+                <div class="subtotal">
+                    <strong>Camp Subtotal: ₹<span id="campSubtotal">0</span></strong>
+                </div>
+            </div>
+
+            <!-- STEP 3: TRAVEL -->
+            <div class="form-step" id="step-3">
+                <h2>✈️ Step 3: Travel Expenses</h2>
+                <div id="travelRows"></div>
+                <button type="button" class="btn-add" onclick="addTravelRow()">+ Add Travel Route</button>
+                <div class="subtotal">
+                    <strong>Travel Subtotal: ₹<span id="travelSubtotal">0</span></strong>
+                </div>
+            </div>
+
+            <!-- STEP 4: DAILY ALLOWANCE -->
+            <div class="form-step" id="step-4">
+                <h2>💰 Step 4: Daily Allowance (DA)</h2>
+                <div class="da-info">
+                    <p><strong>Formula:</strong> (Players + 2 Staff) × Days × Daily Rate</p>
+                </div>
+                <div class="form-group">
+                    <label>Total Players</label>
+                    <input type="number" id="daPlayers" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Staff (Fixed)</label>
+                    <input type="number" id="daStaff" value="2" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Total Persons</label>
+                    <input type="number" id="daTotal" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Number of Days</label>
+                    <input type="number" id="daDays" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Daily Rate per Person (₹) *</label>
+                    <input type="number" id="dailyRate" value="500" oninput="calculateDA()">
+                </div>
+                <div class="subtotal">
+                    <strong>Daily Allowance Total: ₹<span id="daSubtotal">0</span></strong>
+                </div>
+            </div>
+
+            <!-- STEP 5: OTHER EXPENSES -->
+            <div class="form-step" id="step-5">
+                <h2>🎁 Step 5: Other Expenses</h2>
+                <div class="form-group">
+                    <label>Uniform (₹)</label>
+                    <input type="number" id="uniform" value="0" oninput="calculateTotals()">
+                </div>
+                <div class="form-group">
+                    <label>Registration (₹)</label>
+                    <input type="number" id="registration" value="0" oninput="calculateTotals()">
+                </div>
+                <div class="form-group">
+                    <label>Officiating Fees (₹)</label>
+                    <input type="number" id="officiating" value="0" oninput="calculateTotals()">
+                </div>
+                <div class="form-group">
+                    <label>Equipment (₹)</label>
+                    <input type="number" id="equipment" value="0" oninput="calculateTotals()">
+                </div>
+                <div class="form-group">
+                    <label>Miscellaneous (₹)</label>
+                    <input type="number" id="miscellaneous" value="0" oninput="calculateTotals()">
+                </div>
+                <div class="subtotal">
+                    <strong>Other Subtotal: ₹<span id="othersSubtotal">0</span></strong>
+                </div>
+            </div>
+
+            <!-- STEP 6: REVIEW & SUBMIT -->
+            <div class="form-step" id="step-6">
+                <h2>✅ Step 6: Review & Submit</h2>
+                <div class="review-section">
+                    <h3>📊 Summary</h3>
+                    <div class="review-item">
+                        <span>Camp Expenses:</span>
+                        <strong>₹<span id="reviewCamp">0</span></strong>
+                    </div>
+                    <div class="review-item">
+                        <span>Travel Expenses:</span>
+                        <strong>₹<span id="reviewTravel">0</span></strong>
+                    </div>
+                    <div class="review-item">
+                        <span>Daily Allowance:</span>
+                        <strong>₹<span id="reviewDA">0</span></strong>
+                    </div>
+                    <div class="review-item">
+                        <span>Other Expenses:</span>
+                        <strong>₹<span id="reviewOthers">0</span></strong>
+                    </div>
+                    <div class="review-item grand-total">
+                        <span>🎯 GRAND TOTAL:</span>
+                        <strong>₹<span id="grandTotal">0</span></strong>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="confirm" required>
+                        I confirm all details are correct
+                    </label>
+                </div>
+            </div>
+
+            <!-- Form Buttons -->
+            <div class="form-buttons">
+                <button type="button" class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)">← Previous</button>
+                <button type="button" class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">Next →</button>
+                <button type="submit" class="btn btn-success" id="submitBtn" style="display:none;">✓ Submit Form</button>
+            </div>
+        </form>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message" style="display:none;">
+            <h2>✅ Form Submitted Successfully!</h2>
+            <p>Reference Number: <strong id="refNumber"></strong></p>
+            <div class="export-buttons">
+                <button onclick="downloadPDF()" class="btn btn-info">📄 Download PDF</button>
+                <button onclick="downloadWord()" class="btn btn-info">📝 Download Word</button>
+                <button onclick="printForm()" class="btn btn-info">🖨️ Print</button>
+                <button onclick="resetForm()" class="btn btn-secondary">🔄 Start New Form</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
